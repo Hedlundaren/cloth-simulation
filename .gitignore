@@ -1,0 +1,7 @@
+!/.gitignore
+Debug/
+*/textures/
+x64/
+*.sln
+*.VC.db
+*.VC.VC.opendb
