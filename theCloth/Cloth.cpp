@@ -127,7 +127,7 @@ void Cloth::accumulateForces(GLFWwindow *window) {
 
 
 		// Sphere
-		glm::vec3 sphere_center = glm::vec3(0, 2.0f, 0.0f);
+		glm::vec3 sphere_center = glm::vec3(0, 8.0f, 0.0f);
 		float sphere_radius = 5.0f;
 		float sphere_friction = 0.8f;
 		if (glm::length(sphere_center - vertices[v]) < sphere_radius) {
@@ -176,16 +176,16 @@ void Cloth::accumulateForces(GLFWwindow *window) {
 			}
 		}
 
-		if (v < res_x) {
+		//if (v < res_x) {
 
-			if (v % res_x == 0) {
-				forces[v] = glm::vec3(0);
-			}
+		//	if (v % res_x == 0) {
+		//		forces[v] = glm::vec3(0);
+		//	}
 
-			if ((v + 1) % res_x == 0) {
-				forces[v] = glm::vec3(0);
-			}
-		}
+		//	if ((v + 1) % res_x == 0) {
+		//		forces[v] = glm::vec3(0);
+		//	}
+		//}
 
 		
 		

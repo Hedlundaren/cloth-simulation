@@ -143,6 +143,7 @@
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Rotator.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +152,7 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Rotator.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>

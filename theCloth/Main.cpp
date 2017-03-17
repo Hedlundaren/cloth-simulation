@@ -19,6 +19,7 @@
 
 #include "Plane.h"
 #include "Cloth.h"
+#include "Sphere.h"
 
 
 #define HEIGHT 1080
@@ -34,7 +35,7 @@ int main() {
 	float currentTime, deltaTime, lastTime = 0.0f;
 	GLFWwindow* window = nullptr;
 	DisplayWindow myWindow = DisplayWindow(window, WIDTH, HEIGHT, "Without clothes, we would all be naked.");
-	glm::vec3 clear_color = glm::vec3(0.7, 0.65, 0.6);
+	glm::vec3 clear_color = glm::vec3(0.3, 0.45, 0.6);
 
 	// Controls
 	MouseRotator rotator;
@@ -42,6 +43,7 @@ int main() {
 
 	// Create cloth
 	Cloth cloth = Cloth(40, 40, 20, 22);
+	Sphere sphere = Sphere(40, 40, 4.9);
 
 	glUseProgram(0);
 	ShaderProgram standard_program("shaders/standard.vert", "", "", "", "shaders/standard.frag");
@@ -83,7 +85,7 @@ int main() {
 		glActiveTexture(GL_TEXTURE1);
 		carpet.bindTexture();
 		cloth.draw(window);
-
+		//sphere.draw();
 
 		// Finish frame
 		glfwSwapInterval(0);
