@@ -58,9 +58,10 @@ private:
 	
 	bool playSimulation = false;
 	float restLengthX, restLengthZ, restLengthXZ = 0;
-	float spring_factor = 800.9f;
-	float damping_factor = .994;
+	float spring_factor = 300.9f;
+	float damping_factor = .999;
 	float wind_factor = 0.0f;
+	float air_resistance = .05f;
 	glm::vec3 gravity = glm::vec3(0, -9.82f, 0);
 
 	GLuint VAO, IBO, VBO, NBO, UVBO;
