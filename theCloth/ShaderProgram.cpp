@@ -162,7 +162,7 @@ void ShaderProgram::updateCommonUniforms(MouseRotator rotator, float width, floa
 	glm::mat4 M = glm::mat4(1.0f);
 	glm::mat4 VRotX = glm::rotate(M, (rotator.phi), glm::vec3(0.0f, -1.0f, 0.0f)); //Rotation about y-axis
 	glm::mat4 VRotY = glm::rotate(M, (rotator.theta + 0.2f), glm::vec3(-1.0f, 0.0f, 0.0f)); //Rotation about x-axis
-	glm::vec4 camPos = VRotX * VRotY * glm::vec4(0.0f, 0.0f, 100.0f + 0.2f*rotator.zoom, 1.0f);
+	glm::vec4 camPos = VRotX * VRotY * glm::vec4(0.0f, 0.0f, 200.0f + 0.2f*rotator.zoom, 1.0f);
 	glm::vec3 scene_center(0.0f, 0.0f, 0.0f);
 	glm::mat4 V = glm::lookAt(glm::vec3(camPos), scene_center, glm::vec3(0.0f, -1.0f, 0.0f));
 	P = glm::perspectiveFov(50.0f, static_cast<float>(width), static_cast<float>(height), 0.1f, 4000.0f);

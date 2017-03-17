@@ -41,7 +41,7 @@ int main() {
 	rotator.init(window);
 
 	// Create cloth
-	Cloth cloth = Cloth(60, 60, 25, 25);
+	Cloth cloth = Cloth(40, 40, 20, 22);
 
 	glUseProgram(0);
 	ShaderProgram standard_program("shaders/standard.vert", "", "", "", "shaders/standard.frag");

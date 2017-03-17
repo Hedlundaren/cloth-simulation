@@ -122,9 +122,10 @@ void Cloth::accumulateForces(GLFWwindow *window) {
 		wind.z = sin(cos(5*vertices[v].x*vertices[v].y*vertices[v].z));
 		wind *= wind_factor;
 
+
 		// Sphere
 		glm::vec3 sphere_center = glm::vec3(0, 2.0f, 0);
-		float sphere_radius = 7.0f;
+		float sphere_radius = 4.0f;
 		float sphere_friction = 0.05f;
 		if (glm::length(sphere_center - vertices[v]) < sphere_radius) {
 			glm::vec3 dir = glm::normalize(sphere_center - vertices[v] );
@@ -139,7 +140,9 @@ void Cloth::accumulateForces(GLFWwindow *window) {
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_V)) {
-			wind = glm::vec3(10, 0, 0);
+			
+			glm::vec3 dir = glm::vec3(20, 0, 10);
+			wind = dir * glm::length(normals[v] * glm::normalize(dir));
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_R)) {
@@ -162,13 +165,13 @@ void Cloth::accumulateForces(GLFWwindow *window) {
 		// Pinned vertices
 		if (v > vertices.size() - res_x - 1) {
 
-			//if (v % res_x == 0) {
-			//	forces[v] = glm::vec3(0);
-			//}
+			if (v % res_x == 0) {
+				forces[v] = glm::vec3(0);
+			}
 
-			//if ((v + 1) % res_x == 0) {
-			//	forces[v] = glm::vec3(0);
-			//}
+			if ((v + 1) % res_x == 0) {
+				forces[v] = glm::vec3(0);
+			}
 		}
 
 		

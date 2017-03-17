@@ -59,7 +59,7 @@ private:
 	bool playSimulation = false;
 	float restLengthX, restLengthZ, restLengthXZ = 0;
 	float spring_factor = 800.9f;
-	float damping_factor = .99;
+	float damping_factor = .994;
 	float wind_factor = 0.0f;
 	glm::vec3 gravity = glm::vec3(0, -9.82f, 0);
 
