@@ -15,98 +15,225 @@ Cloth::Cloth(const int rx, const int rz, int w, int l) : res_x(rx), res_z(rz), w
 
 Cloth::~Cloth()
 {
-	//glDeleteBuffers(indices.size()​, IBO​);
-	//glDeleteBuffers(vertices.size()​, VBO);
-	//glDeleteBuffers(uvs.size()​, UVBO);
+
 }
 
+int Cloth::getId(int direction, int id) {
+	if (DIRS.WEST == direction) { return id - 1; }
+	else if (DIRS.NORTHWEST == direction) { return id + res_x - 1;}
+	else if (DIRS.NORTH == direction) {return id + res_x;}
+	else if (DIRS.NORTHEAST == direction) {return id + res_x + 1;}
+	else if (DIRS.EAST == direction) {return id + 1;}
+	else if (DIRS.SOUTHEAST == direction) {return id - res_x + 1;}
+	else if (DIRS.SOUTH == direction) {return id - res_x;}
+	else {return id - res_x - 1;}
+}
+
+glm::vec3 Cloth::getSpringForce(int direction, int id) {
+
+	float restLength = 0;
+	if (direction == DIRS.NORTH || direction == DIRS.SOUTH) restLength = restLengthZ;
+	else if(direction == DIRS.WEST || direction == DIRS.EAST) restLength = restLengthX;
+	else restLength = restLengthXZ;
+
+	glm::vec3 delta = vertices[id] - vertices[getId(direction, id)];
+	float deltaLength = glm::length(delta); // distance
+	float diff = (deltaLength - restLength) / deltaLength;
+
+	return delta * diff * spring_factor;
+}
 
 // Method functions
-void Cloth::accumulateForces() {
+void Cloth::accumulateForces(GLFWwindow *window) {
 	
 	
 	// F(v) = Mg + Fwind + Fairresistance - k*sum(x_current - x_rest)
 
 
-	glm::vec3 gravity = glm::vec3(0, -9.82f, 0); 
-	glm::vec3 wind = glm::vec3(0, 0, 0);
+
 	for (int v = 0; v < vertices.size(); v++) {
-
-		forces[v] = gravity;
-		if (v % res_x == 0) { // west vertex
-			forces[v] = glm::vec3(0);
-		}
-		else {
-
-		}
-
-		if (v > vertices.size() - res_x - 1) {// north vertex
-			forces[v] = glm::vec3(0);
-		}
-		else {
-
-		}
-
-		if((v + 1) % res_x == 0){ // east vertex
-			forces[v] = glm::vec3(0);
-		}
-		else {
-
-		}
 		
-		if (v < res_x) {// south vertex
-			forces[v] = glm::vec3(0);
-		}
-		else {
+		glm::vec3 wind = glm::vec3(0, 0, 0);
+		glm::vec3 spring = glm::vec3(0, 0, 0);
 
+		std::vector<glm::vec3> spring_directions;
+
+		if (v % res_x != 0) { // WEST 
+			glm::vec3 force = getSpringForce(DIRS.WEST, v);
+			spring += force;
+			spring_directions.push_back(glm::normalize(vertices[v] - vertices[getId(DIRS.WEST, v)]));
 		}
 
-		//forces[v] = gravity + wind;
+		if (v < vertices.size() - res_x) {// NORTH 
+
+			if (v % res_x != 0) {
+				glm::vec3 force = getSpringForce(DIRS.NORTHWEST, v);
+				spring += force;
+				spring_directions.push_back(glm::normalize(vertices[v] - vertices[getId(DIRS.NORTHWEST, v)]));
+			}
+
+			glm::vec3 force = getSpringForce(DIRS.NORTH, v);
+			spring += force;
+			spring_directions.push_back(glm::normalize(vertices[v] - vertices[getId(DIRS.NORTH, v)]));
+			
+			if ((v + 1) % res_x != 0) { 
+				glm::vec3 force = getSpringForce(DIRS.NORTHEAST, v);
+				spring += force;
+				spring_directions.push_back(glm::normalize(vertices[v] - vertices[getId(DIRS.NORTHEAST, v)]));
+			}
+		}
+	
+		if((v + 1) % res_x != 0){ // EAST 
+			glm::vec3 force = getSpringForce(DIRS.EAST, v);
+			spring += force;
+			spring_directions.push_back(glm::normalize(vertices[v] - vertices[getId(DIRS.EAST, v)]));
+		}
+
+		if (v > res_x - 1) {// SOUTH 
+			
+			if ((v + 1) % res_x != 0) {
+				glm::vec3 force = getSpringForce(DIRS.SOUTHEAST, v);
+				spring += force;
+				spring_directions.push_back(glm::normalize(vertices[v] - vertices[getId(DIRS.SOUTHEAST, v)]));
+			}
+			
+			glm::vec3 force = getSpringForce(DIRS.SOUTH, v);
+			spring += force;
+			spring_directions.push_back(glm::normalize(vertices[v] - vertices[getId(DIRS.SOUTH, v)]));
+
+			if (v % res_x != 0) {
+				glm::vec3 force = getSpringForce(DIRS.SOUTHWEST, v);
+				spring += force;
+				spring_directions.push_back(glm::normalize(vertices[v] - vertices[getId(DIRS.SOUTHWEST, v)]));
+			}
+			
+		}
+
+		// Calculate normals
+		glm::vec3 normal = glm::vec3(0);
+		for (int i = 1; i < spring_directions.size(); i++) {
+			normal += glm::cross(spring_directions[i], spring_directions[i-1]);
+		}
+		normals[v] = glm::normalize(normal);
+
+		// Wind
+		wind.x = sin(vertices[v].x*vertices[v].y*glfwGetTime());
+		wind.y = cos(vertices[v].z*glfwGetTime());
+		wind.z = sin(cos(5*vertices[v].x*vertices[v].y*vertices[v].z));
+		wind *= wind_factor;
+
+		// Sphere
+		glm::vec3 sphere_center = glm::vec3(0, 2.0f, 0);
+		float sphere_radius = 7.0f;
+		float sphere_friction = 0.05f;
+		if (glm::length(sphere_center - vertices[v]) < sphere_radius) {
+			glm::vec3 dir = glm::normalize(sphere_center - vertices[v] );
+			float factor = sphere_radius - glm::length(sphere_center - vertices[v]);
+			vertices[v] -= factor * dir;
+			velocities[v] *= sphere_friction;
+		}
+
+		// Controls
+		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+			playSimulation = true;
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_V)) {
+			wind = glm::vec3(10, 0, 0);
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_R)) {
+			for (int v = 0; v < vertices.size(); v++) {
+				vertices[v] = init_positions[v];
+				velocities[v] = glm::vec3(0);
+				prev_positions[v] = vertices[v];
+			}
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_G)) {
+			gravity = glm::vec3(0, 9, 0);
+		}else gravity = glm::vec3(0, -9, 0);
+
+		if (playSimulation) {
+			forces[v] = wind + gravity - spring;
+		}
+
+
+		// Pinned vertices
+		if (v > vertices.size() - res_x - 1) {
+
+			//if (v % res_x == 0) {
+			//	forces[v] = glm::vec3(0);
+			//}
+
+			//if ((v + 1) % res_x == 0) {
+			//	forces[v] = glm::vec3(0);
+			//}
+		}
+
+		
+		
 	}
 }
 
-void Cloth::eulerIntegration(float dt) {
+void Cloth::forwardEulerIntegration(float dt) {
 
 	for (int v = 0; v < vertices.size(); v++) {
 		glm::vec3 acceleration = forces[v] * 1.0f; // mass
-		velocities[v] = velocities[v] + acceleration * dt;
-		positions[v] = positions[v] + velocities[v] * dt;
-		vertices[v] = positions[v]; // Update vertices
+		velocities[v] = damping_factor*velocities[v] + acceleration * dt;
+		vertices[v] = vertices[v] + velocities[v] * dt;
 	}
+}
 
-	//std::cout << "positions[1]: (" << positions[1].x << ", " << positions[1].y << ", " << positions[1].z << ")\n";
-	//std::cout << "vertices[1]: (" << vertices[1].x << ", " << vertices[1].y << ", " << vertices[1].z  << ")\n";
+void Cloth::backwardEulerIntegration(float dt) {
+
+	for (int v = 0; v < vertices.size(); v++) {
+
+
+	}
+}
+
+void Cloth::verletIntegration(float dt, int n_iterations) {
+	
+	for (int v = 0; v < vertices.size(); v++) {
+		glm::vec3 position_prim = glm::vec3(0);
+		glm::vec3 acceleration = forces[v] * 1.0f; // mass
+		for (int i = 0; i < n_iterations; i++) {
+			position_prim = 2.0f * vertices[v] - prev_positions[v] + acceleration * dt * dt;
+			prev_positions[v] = vertices[v];
+		}
+		vertices[v] = position_prim;
+	}
+}
+
+/* ============================= //
+	UPDATE SIMULATION
+// ============================= */ 
+void Cloth::updateSimulation(float dt, GLFWwindow *window) {
+	accumulateForces(window);
+	//verletIntegration(dt, 1);
+	forwardEulerIntegration(dt);
 
 	// Send vertices to OpenGL
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float) * 3, &vertices[0], GL_STATIC_DRAW); 
-	glEnableVertexAttribArray(0); 
-	glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(float) * 3,(void*)0);
-}
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float) * 3, &vertices[0], GL_DYNAMIC_DRAW);
 
-void Cloth::verletIntegration(float dt) {
-	
-	for (int v = 0; v < vertices.size(); v++) {
-		// x_prim = 2x - x_prev + a * dt^2
-		// x_prev = x 
-	}
-}
-
-void Cloth::updateSimulation(float dt) {
-	accumulateForces();
-	eulerIntegration(dt);
+	// Send normals to OpenGL
+	glBindBuffer(GL_ARRAY_BUFFER, NBO);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float) * 3, &normals[0], GL_DYNAMIC_DRAW);
 }
 
 
 
 void Cloth::draw(GLFWwindow *window) {
-	glLineWidth(2.0);
-	glPointSize(2.0);
+	glLineWidth(1.0);
+	glPointSize(4.0);
 
 	// Draw lines if W pressed
 	if (glfwGetKey(window, GLFW_KEY_W))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else glPolygonMode(GL_FRONT_AND_BACK, GL_TRIANGLES);
+	if (glfwGetKey(window, GLFW_KEY_Q))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 
 	//Draw Object
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -127,14 +254,17 @@ void Cloth::draw(GLFWwindow *window) {
 }
 
 void Cloth::create_plane() {
-	float height = 0.0f;
+	float height = 20.0f;
 
-	float leap_x = width / res_x;
-	float offset_x = width / 2.0f - leap_x / 2.0f; // center
+	float leap_x = (float) width / (float) res_x;
+	float offset_x = (float) width / 2.0f - (float) leap_x / 2.0f; // center
 
-	float leap_z = length / res_z;
-	float offset_z = length / 2.0f - leap_z / 2.0f; // center
+	float leap_z = (float) length / (float) res_z;
+	float offset_z = (float) length / 2.0f - (float) leap_z / 2.0f; // center
 
+	restLengthX = leap_x;
+	restLengthZ = leap_z;
+	restLengthXZ = sqrt(pow(leap_x, 2) + pow(leap_z, 2));
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -142,13 +272,15 @@ void Cloth::create_plane() {
 	for (float z = 0; z < res_z; z += 1.0f) {
 		for (float x = 0; x < res_x; x += 1.0f) {
 			vertices.push_back(glm::vec3(x*leap_x - offset_x, height, z*leap_z - offset_z));
+			init_positions.push_back(glm::vec3(x*leap_x - offset_x, height, z*leap_z - offset_z));
+
+			normals.push_back(glm::vec3(0,1,0));
 			uvs.push_back(glm::vec2(x / res_x, z / res_z));
 
 			// Properties
 			forces.push_back(glm::vec3(0));
 			velocities.push_back(glm::vec3(0));
-			positions.push_back(vertices[vertices.size() - 1]);
-			prev_pos.push_back(vertices[vertices.size() - 1]);
+			prev_positions.push_back(vertices[vertices.size() - 1]);
 
 		}
 	}
@@ -172,30 +304,23 @@ void Cloth::create_plane() {
 	// Model vertices
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float) * 3, &vertices[0], GL_STATIC_DRAW); // Give our vertices to OpenGL.
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float) * 3, &vertices[0], GL_DYNAMIC_DRAW); // Give our vertices to OpenGL.
 	glEnableVertexAttribArray(0); // 1rst attribute buffer : vertices
-	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		sizeof(float) * 3,  // stride
-		(void*)0			// array buffer offset
-	);
+	glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE, sizeof(float) * 3,(void*)0);
+
+	// Model normals
+	glGenBuffers(1, &NBO);
+	glBindBuffer(GL_ARRAY_BUFFER, NBO);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float) * 3, &normals[0], GL_DYNAMIC_DRAW); // Give our vertices to OpenGL.
+	glEnableVertexAttribArray(1); // 2rst attribute buffer : vertices
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
 	// Model uv coords
 	glGenBuffers(1, &UVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, UVBO);
 	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(float) * 2, &uvs[0], GL_STATIC_DRAW); // Give our uvs to OpenGL.
-	glEnableVertexAttribArray(1); // 2rst attribute buffer : uvs
-	glVertexAttribPointer(
-		1,                  // attribute 1. No particular reason for 0, but must match the layout in the shader.
-		2,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		sizeof(float) * 2,  // stride
-		(void*)0			// array buffer offset
-	);
+	glEnableVertexAttribArray(2); // 3rst attribute buffer : uvs
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
 
 	// Model indices
 	glGenBuffers(1, &IBO);

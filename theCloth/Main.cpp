@@ -15,6 +15,7 @@
 #include "DisplayWindow.h"
 #include "ShaderProgram.h"
 #include "Rotator.h"
+#include "Texture.h"
 
 #include "Plane.h"
 #include "Cloth.h"
@@ -40,11 +41,16 @@ int main() {
 	rotator.init(window);
 
 	// Create cloth
-	Cloth cloth = Cloth(10, 10, 10, 10);
+	Cloth cloth = Cloth(60, 60, 25, 25);
 
 	glUseProgram(0);
 	ShaderProgram standard_program("shaders/standard.vert", "", "", "", "shaders/standard.frag");
 	ShaderProgram cloth_program("shaders/cloth.vert", "", "", "", "shaders/cloth.frag");
+
+	Texture albin("textures/albin.png");
+	Texture carpet("textures/carpet.png");
+
+	GLint texLoc;
 
 	do {
 		// Init frame
@@ -55,17 +61,35 @@ int main() {
 		rotator.poll(window);
 
 		// Simulate
-		cloth.updateSimulation(deltaTime);
+		if(!glfwGetKey(window, GLFW_KEY_P))
+			cloth.updateSimulation(deltaTime, window);
+
 
 		// Draw
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // We're not using stencil buffer now
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 		cloth_program();
 		cloth_program.updateCommonUniforms(rotator, WIDTH, HEIGHT, currentTime, clear_color);
+
+		
+		texLoc = glGetUniformLocation(cloth_program, "albinTexture");
+		glUniform1i(texLoc, 0);
+		texLoc = glGetUniformLocation(cloth_program, "carpetTexture");
+		glUniform1i(texLoc, 1);
+
+		glActiveTexture(GL_TEXTURE0);
+		albin.bindTexture();
+		glActiveTexture(GL_TEXTURE1);
+		carpet.bindTexture();
 		cloth.draw(window);
+
 
 		// Finish frame
 		glfwSwapInterval(0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		
 
 	} while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 		glfwWindowShouldClose(window) == 0);

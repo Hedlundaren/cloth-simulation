@@ -1,6 +1,5 @@
 !/.gitignore
 Debug/
-*/textures/
 x64/
 *.sln
 *.VC.db

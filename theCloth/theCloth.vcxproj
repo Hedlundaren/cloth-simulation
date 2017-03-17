@@ -69,29 +69,30 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\src;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\projects\VC9\x64\Release;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\src;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\projects\VC9\x64\Release;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\src;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\projects\VC9\x64\Release;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\src;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\projects\VC9\x64\Release;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;OpenGL32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -99,9 +100,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;OpenGL32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -111,11 +113,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;OpenGL32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -125,11 +128,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\headers;C:\Users\Simon\Documents\Visual Studio 2015\Projects\OPENGL_ESSENTIALS\SOIL\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;glfw3.lib;glfw3dll.lib;OpenGL32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -139,6 +143,7 @@
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Rotator.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cloth.h" />
@@ -146,6 +151,7 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Rotator.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cloth.frag" />
